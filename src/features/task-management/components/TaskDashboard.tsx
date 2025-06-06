@@ -4,10 +4,14 @@ import { useState } from 'react'
 import { useTaskStore } from '../stores/taskStore'
 import { createTask, updateTask as updateTaskService } from '../services/taskService'
 import type { Task } from '../stores/taskStore'
+import { Button } from 'antd'
+import { useNavigate } from 'react-router-dom'
+import { BarChartOutlined } from '@ant-design/icons'
 
 const TaskDashboard = () => {
   const { addTask, updateTask } = useTaskStore()
   const [editingTask, setEditingTask] = useState<Task | null>(null)
+  const navigate = useNavigate()
 
   const handleSubmit = async (values) => {
     const payload = {
@@ -30,13 +34,25 @@ const TaskDashboard = () => {
   }
 
   return (
-<div style={{
-  backgroundColor: '#f0f2f5',
-  padding: '40px 16px',
-  minHeight: '100vh',
-  display: 'flex',
-  justifyContent: 'center',
-}}>
+    <div
+      style={{
+        backgroundColor: '#f0f2f5',
+        padding: '40px 16px',
+        minHeight: '100vh',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center'
+      }}
+    >
+      <div style={{ width: '100%', maxWidth: 1200, marginBottom: 24, textAlign: 'right' }}>
+        <Button
+          type="primary"
+          icon={<BarChartOutlined />}
+          onClick={() => navigate('/app/resumen')}
+        >
+          Ver Dashboard
+        </Button>
+      </div>
 
       <div
         style={{

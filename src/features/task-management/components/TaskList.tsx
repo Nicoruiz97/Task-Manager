@@ -1,21 +1,16 @@
 import { useEffect } from 'react'
 import {
   Card,
-  List,
-  Tag,
-  Typography,
   Spin,
   Empty,
   Select,
   Input,
-  Button,
-  Space,
-  Popconfirm
+  Space
 } from 'antd'
 import { useTaskStore } from '../stores/taskStore'
 import { fetchTasks, deleteTask as removeTask } from '../services/taskService'
+import TaskCard from './TaskCard'
 
-const { Text } = Typography
 const { Option } = Select
 
 const TaskList = ({ setEditingTask }) => {
@@ -41,32 +36,6 @@ const TaskList = ({ setEditingTask }) => {
     if (ok) deleteTask(id)
   }
 
-  const getPriorityColor = (priority: string) => {
-    switch (priority) {
-      case 'alta':
-        return 'red'
-      case 'media':
-        return 'gold'
-      case 'baja':
-        return 'green'
-      default:
-        return 'blue'
-    }
-  }
-
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'pendiente':
-        return 'orange'
-      case 'en_progreso':
-        return 'blue'
-      case 'completada':
-        return 'cyan'
-      default:
-        return 'default'
-    }
-  }
-
   return (
     <Card
       title="Mis tareas"
@@ -83,7 +52,7 @@ const TaskList = ({ setEditingTask }) => {
           onChange={(e) => setFilters({ search: e.target.value })}
           allowClear
         />
-        <Space>
+        <Space wrap>
           <Select
             value={filters.status}
             onChange={(value) => setFilters({ status: value })}
@@ -112,50 +81,16 @@ const TaskList = ({ setEditingTask }) => {
       ) : filteredTasks().length === 0 ? (
         <Empty description="No hay tareas que coincidan" />
       ) : (
-        <List
-          itemLayout="horizontal"
-          dataSource={filteredTasks()}
-          renderItem={(task) => (
-            <List.Item
-              actions={[
-                <Button type="link" onClick={() => setEditingTask(task)}>
-                  Editar
-                </Button>,
-                <Popconfirm
-                  title="¿Eliminar esta tarea?"
-                  onConfirm={() => handleDelete(task.id)}
-                  okText="Sí"
-                  cancelText="No"
-                >
-                  <Button type="link" danger>
-                    Eliminar
-                  </Button>
-                </Popconfirm>
-              ]}
-            >
-              <List.Item.Meta
-                title={<Text strong>{task.title}</Text>}
-                description={
-                  <>
-                    {task.description && (
-                      <>
-                        <Text>{task.description}</Text>
-                        <br />
-                      </>
-                    )}
-                    <Tag color={getPriorityColor(task.priority)}>
-                      Prioridad: {task.priority}
-                    </Tag>
-                    <Tag color={getStatusColor(task.status)}>
-                      Estado: {task.status}
-                    </Tag>
-                    <Tag>Vence: {task.due_date}</Tag>
-                  </>
-                }
-              />
-            </List.Item>
-          )}
-        />
+        <div>
+          {filteredTasks().map(task => (
+            <TaskCard
+              key={task.id}
+              task={task}
+              onEdit={setEditingTask}
+              onDelete={handleDelete}
+            />
+          ))}
+        </div>
       )}
     </Card>
   )

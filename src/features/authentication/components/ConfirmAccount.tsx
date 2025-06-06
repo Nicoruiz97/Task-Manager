@@ -1,73 +1,65 @@
 import { useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useLocation, Navigate } from 'react-router-dom'
 import { supabase } from '../../../shared/services/supabase'
-import { useAuthStore } from '../stores/authStore'
-import { Spin, Alert } from 'antd'
+import { Alert, Spin } from 'antd'
 
 const ConfirmAccount = () => {
-  const navigate = useNavigate()
-  const { setUser } = useAuthStore()
+  const location = useLocation()
+  const queryParams = new URLSearchParams(location.search)
+  const code = queryParams.get('code')
+  const type = queryParams.get('type')
 
-  const [status, setStatus] = useState<'loading' | 'success' | 'error'>('loading')
-  const [errorMessage, setErrorMessage] = useState<string>('')
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+  const [success, setSuccess] = useState(false)
 
   useEffect(() => {
-    const confirmSession = async () => {
-      const { data, error } = await supabase.auth.exchangeCodeForSession(window.location.href)
-
-      if (error) {
-        setErrorMessage(error.message || 'Token inválido o expirado')
-        setStatus('error')
+    const confirm = async () => {
+      if (!code || !type) {
+        setLoading(false)
         return
       }
 
-      if (data?.user) {
-        setUser(data.user)
-        setStatus('success')
-        setTimeout(() => navigate('/login'), 2000)
+      const { error } = await supabase.auth.verifyOtp({
+        type: type === 'signup' ? 'signup' : 'magiclink',
+        token: code,
+        email: queryParams.get('email') || ''
+      })
+
+      if (error) {
+        setError(error.message)
       } else {
-        setErrorMessage('No se pudo confirmar la cuenta')
-        setStatus('error')
+        setSuccess(true)
       }
+
+      setLoading(false)
     }
 
-    confirmSession()
-  }, [])
+    confirm()
+  }, [code, type])
 
-  return (
-    <div style={{ maxWidth: 400, margin: 'auto', marginTop: 80 }}>
-      {status === 'loading' && (
-        <>
-          <Spin />
-          <Alert
-            message="Confirmando tu cuenta..."
-            description="Un momento por favor."
-            type="info"
-            showIcon
-            style={{ marginTop: 16 }}
-          />
-        </>
-      )}
+  if (!code || !type) {
+    return <Navigate to="/login" />
+  }
 
-      {status === 'success' && (
-        <Alert
-          message="¡Cuenta confirmada!"
-          description="Redirigiendo al login..."
-          type="success"
-          showIcon
-        />
-      )}
+  if (loading) return <Spin tip="Confirmando cuenta..." />
 
-      {status === 'error' && (
-        <Alert
-          message="Error al confirmar"
-          description={errorMessage}
-          type="error"
-          showIcon
-        />
-      )}
-    </div>
-  )
+  if (error) {
+    return <Alert type="error" message="Error al confirmar" description={error} showIcon />
+  }
+
+  if (success) {
+    return (
+      <Alert
+        type="success"
+        message="Cuenta confirmada correctamente"
+        description="Ahora puedes iniciar sesión"
+        showIcon
+      />
+    )
+  }
+
+  return null
 }
 
 export default ConfirmAccount

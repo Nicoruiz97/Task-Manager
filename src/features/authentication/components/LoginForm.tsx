@@ -22,21 +22,21 @@ const LoginForm = () => {
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: '#1e1e1e',
+        background: 'linear-gradient(135deg, #e0eafc, #cfdef3)',
         padding: '2rem',
       }}
     >
       <div
         style={{
-          background: '#fff',
-          padding: '2rem',
-          borderRadius: '12px',
-          boxShadow: '0 8px 24px rgba(0, 0, 0, 0.2)',
+          background: '#ffffff',
+          padding: '2.5rem',
+          borderRadius: '16px',
+          boxShadow: '0 12px 30px rgba(0, 0, 0, 0.15)',
           width: '100%',
-          maxWidth: '400px',
+          maxWidth: '420px',
         }}
       >
-        <Title level={3} style={{ textAlign: 'center', marginBottom: '1.5rem' }}>
+        <Title level={3} style={{ textAlign: 'center', marginBottom: '1.5rem', color: '#333' }}>
           Iniciar sesión
         </Title>
 
@@ -60,7 +60,7 @@ const LoginForm = () => {
             name="email"
             rules={[{ required: true, message: 'Por favor ingresa tu correo' }]}
           >
-            <Input />
+            <Input size="large" placeholder="ejemplo@correo.com" />
           </Form.Item>
 
           <Form.Item
@@ -68,17 +68,32 @@ const LoginForm = () => {
             name="password"
             rules={[{ required: true, message: 'Por favor ingresa tu contraseña' }]}
           >
-            <Input.Password />
+            <Input.Password size="large" placeholder="••••••••" />
           </Form.Item>
 
           <Form.Item>
-            <Button type="primary" htmlType="submit" loading={isLoading} block>
+            <Button
+              type="primary"
+              htmlType="submit"
+              loading={isLoading}
+              block
+              size="large"
+              style={{ transition: 'all 0.3s ease' }}
+            >
               Iniciar sesión
             </Button>
           </Form.Item>
         </Form>
 
-        <Text type="secondary" style={{ display: 'block', textAlign: 'center', marginTop: '1rem' }}>
+        <Text
+          type="secondary"
+          style={{
+            display: 'block',
+            textAlign: 'center',
+            marginTop: '1.5rem',
+            fontSize: '0.95rem',
+          }}
+        >
           ¿No tienes cuenta? <a href="/register">Regístrate</a>
         </Text>
       </div>

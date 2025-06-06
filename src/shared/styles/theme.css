@@ -1,0 +1,26 @@
+/* Tema claro */
+.light-theme {
+    background-color: #e9ecf3;
+    color: #000;
+  }
+  
+  /* Tema oscuro */
+  .dark-theme {
+    background-color: #1e1e2f;
+    color: #f0f0f0;
+  }
+  
+  .dark-theme .ant-card {
+    background-color: #2a2a3f !important;
+    border-color: #444 !important;
+    color: #fff;
+  }
+  
+  .dark-theme .ant-typography {
+    color: #fff;
+  }
+  
+  .dark-theme .ant-card-head-title {
+    color: #fff;
+  }
+  
